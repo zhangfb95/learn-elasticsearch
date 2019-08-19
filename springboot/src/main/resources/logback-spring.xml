@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="../../log"/>
+
+    <property name="appName" value="juconcurrent"/>
+    <property name="moduleName" value="learn-elasticsearch"/>
+    <!-- 文档保留天数 -->
+    <property name="maxHistory" value="30"/>
+    <!-- 文档保留总大小 -->
+    <property name="totalSizeCap" value="10GB"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%cyan(%d)|%highlight(%level)|${moduleName},%X{_API_URL},%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-Span-Export}|%yellow(%thread)|%blue(%logger{36}:%line)|%msg%n"/>
+
+    <!--没有颜色-->
+    <property name="FILE_LOG_PATTERN"
+              value="%d|%level|${moduleName},%X{_API_URL},%X{X-B3-TraceId},%X{X-B3-SpanId},%X{X-Span-Export}|%thread|%logger{36}:%line|%msg%n"/>
+
+    <!--%X{requestId}-->
+
+    <!--输出到控制台 ConsoleAppender-->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则
+            如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天
+            的日志改名为今天的日期。即，<File> 的日志都是当天的。
+        -->
+        <File>${logPath}/${appName}-${moduleName}.log</File>
+        <!--滚动策略，按照时间滚动 TimeBasedRollingPolicy-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间-->
+            <FileNamePattern>${logPath}/${appName}-${moduleName}.log.%d{yyyy-MM-dd}</FileNamePattern>
+            <!--只保留最近90天的日志-->
+            <maxHistory>${maxHistory}</maxHistory>
+            <!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志-->
+            <totalSizeCap>${totalSizeCap}</totalSizeCap>
+        </rollingPolicy>
+        <!--日志输出编码格式化-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>2048</queueSize>
+        <includeCallerData>true</includeCallerData>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="fileInfoLog"/>
+    </appender>
+
+    <springProfile name="local">
+        <logger name="root" level="INFO" additivity="false">
+            <appender-ref ref="consoleLog"/>
+            <appender-ref ref="ASYNC"/>
+        </logger>
+    </springProfile>
+</configuration>

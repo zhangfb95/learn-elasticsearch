@@ -1,0 +1,7 @@
+spring:
+  data:
+    elasticsearch:
+      cluster-name: hik-es
+      cluster-nodes: 10.197.236.172:9300
+      repositories:
+        enabled: true
