@@ -1,5 +1,6 @@
 package com.juconcurrent.learn.elasticsearch.springboot;
 
+import com.juconcurrent.learn.elasticsearch.springboot.domain.elasticsearch.ArticleEO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,6 @@ public class ApplicationTest {
 
     @Test
     public void testCreateIndex() {
-        elasticsearchTemplate.createIndex(Article.class);
+        elasticsearchTemplate.createIndex(ArticleEO.class);
     }
 }

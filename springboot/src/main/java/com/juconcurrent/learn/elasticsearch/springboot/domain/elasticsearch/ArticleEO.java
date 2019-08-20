@@ -1,4 +1,4 @@
-package com.juconcurrent.learn.elasticsearch.springboot;
+package com.juconcurrent.learn.elasticsearch.springboot.domain.elasticsearch;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  */
 @Document(indexName = "zhangfubing_article", type = "_doc")
 @Data
-public class Article {
+public class ArticleEO {
 
     @Id
     private Long id; // 主键id

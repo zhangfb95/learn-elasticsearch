@@ -1,5 +1,7 @@
-package com.juconcurrent.learn.elasticsearch.springboot;
+package com.juconcurrent.learn.elasticsearch.springboot.api;
 
+import com.juconcurrent.learn.elasticsearch.springboot.dao.elasticsearch.ArticleES;
+import com.juconcurrent.learn.elasticsearch.springboot.domain.elasticsearch.ArticleEO;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +14,10 @@ import java.util.Iterator;
  * @create 2019/8/19 20:31
  */
 @RestController
-public class TestController {
+public class TestApi {
 
     @Autowired
-    private ArticleSearchRepository articleSearchRepository;
+    private ArticleES articleES;
 
     @RequestMapping("/add")
     public void testSaveArticleIndex() {
@@ -25,8 +27,8 @@ public class TestController {
     public void testSearch() {
         String queryString = "springboot";//搜索关键字
         QueryStringQueryBuilder builder = new QueryStringQueryBuilder(queryString);
-        Iterable<Article> searchResult = articleSearchRepository.search(builder);
-        Iterator<Article> iterator = searchResult.iterator();
+        Iterable<ArticleEO> searchResult = articleES.search(builder);
+        Iterator<ArticleEO> iterator = searchResult.iterator();
         while (iterator.hasNext()) {
             System.out.println(iterator.next());
         }
